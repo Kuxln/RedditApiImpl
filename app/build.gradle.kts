@@ -44,9 +44,9 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
-
+    kapt(libs.hilt.android.compiler)
     implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.coil)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
