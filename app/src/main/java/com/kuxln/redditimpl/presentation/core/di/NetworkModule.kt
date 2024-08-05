@@ -2,6 +2,7 @@ package com.kuxln.redditimpl.presentation.core.di
 
 import com.kuxln.redditimpl.data.api.RedditApiDataSource
 import com.kuxln.redditimpl.data.api.RedditApiService
+import com.kuxln.redditimpl.domain.RedditRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +34,11 @@ class NetworkModule {
     @Singleton
     fun provideRedditApiDataSource(apiService: RedditApiService): RedditApiDataSource {
         return RedditApiDataSource(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRedditRepo(api: RedditApiDataSource): RedditRepo {
+        return RedditRepo(api)
     }
 }

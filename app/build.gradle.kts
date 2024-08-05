@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.retrofit)
