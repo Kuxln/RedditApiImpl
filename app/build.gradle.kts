@@ -43,12 +43,16 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.fragment.ktx)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.coil)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
