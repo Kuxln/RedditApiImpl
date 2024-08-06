@@ -1,20 +1,29 @@
 package com.kuxln.redditimpl.data
 
+import com.google.gson.annotations.SerializedName
+
 data class RedditApiResponse(
+    @SerializedName("data")
     val data: RedditData
 )
 
 data class RedditData(
+    @SerializedName("children")
     val children: List<PostItem>
 )
 
 data class PostItem(
-    val data: PostData,
+    @SerializedName("data")
+    val data: RedditDataEntity,
 )
 
-data class PostData (
+data class RedditDataEntity (
+    @SerializedName("title")
     val title: String,
+    @SerializedName("author")
     val author: String,
-    val url_overridden_by_dest: String,
-    val created: Int,
+    @SerializedName("url_overridden_by_dest")
+    val imageUrl: String,
+    @SerializedName("created")
+    val created: Long,
 )

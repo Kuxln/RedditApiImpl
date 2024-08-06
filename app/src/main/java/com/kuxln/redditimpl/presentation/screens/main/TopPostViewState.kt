@@ -1,7 +1,8 @@
 package com.kuxln.redditimpl.presentation.screens.main
 
-import com.kuxln.redditimpl.data.RedditDataPage
+import com.kuxln.redditimpl.data.RedditDataEntity
 
 data class TopPostViewState(
-    var dataPages: List<RedditDataPage>? = null
+    var data: List<RedditDataEntity>? = null,
+    var isError: Boolean? = null,
 )
