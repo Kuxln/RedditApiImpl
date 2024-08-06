@@ -25,11 +25,18 @@ class TopPostsViewModel @Inject constructor(
     private val _liveData = MutableLiveData<TopPostViewState>()
     private val state = TopPostViewState()
 
+    fun onError() {
+        state.isError = null
+        _liveData.postValue(state)
+        fetchData()
+    }
+
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getData().onSuccess {
                 state.data = it
             }.onFailure {
+                it.printStackTrace()
                 state.isError = true
             }
             _liveData.postValue(state)
