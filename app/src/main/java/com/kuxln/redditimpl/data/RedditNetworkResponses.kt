@@ -26,4 +26,6 @@ data class RedditDataEntity (
     val imageUrl: String,
     @SerializedName("created")
     val created: Long,
+    @SerializedName("num_comments")
+    val commentsCount: Int,
 )
