@@ -11,10 +11,4 @@ interface RedditApiService {
         @Query("after") sliceAfter: String? = null,
         @Query("limit") limit: String = "10"
     ): Response<RedditApiResponse>
-
-//    @GET("/top.json")
-//    suspend fun getNext(
-//        @Query("after") sliceAfter: String,
-//        @Query("limit") limit: String = "10"
-//    ): Response<RedditApiResponse>
 }

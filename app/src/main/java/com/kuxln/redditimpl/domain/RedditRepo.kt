@@ -11,8 +11,4 @@ class RedditRepo @Inject constructor(
     suspend fun getTopPosts(currentSlice: String? = null): Result<RedditData> {
         return api.getTopPosts(currentSlice)
     }
-
-//    suspend fun getNextData(): Result<List<RedditDataEntity>> {
-//        return api.getNextData()
-//    }
 }

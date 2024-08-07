@@ -31,6 +31,10 @@ class TopPostsViewModel @Inject constructor(
         _liveData.postValue(state)
     }
 
+    fun onListEndReached() {
+        fetchNextData()
+    }
+
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getTopPosts().onSuccess {
@@ -43,8 +47,6 @@ class TopPostsViewModel @Inject constructor(
                 state.isError = true
             }
             _liveData.postValue(state)
-            delay(5000)
-            fetchNextData()
         }
     }
 

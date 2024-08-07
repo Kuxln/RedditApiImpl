@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import com.kuxln.redditimpl.R
 import com.kuxln.redditimpl.data.RedditDataEntity
+import com.kuxln.redditimpl.databinding.ListItemProgressBarBinding
 import com.kuxln.redditimpl.databinding.ListItemRedditPostCardBinding
 
 class RedditPostsDiffCallback(
@@ -19,12 +21,12 @@ class RedditPostsDiffCallback(
     override fun getNewListSize(): Int = newDataSet.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldDataSet[oldItemPosition].author == newDataSet[newItemPosition].author &&
+        return oldDataSet[oldItemPosition].subredditName == newDataSet[newItemPosition].subredditName &&
                 oldDataSet[oldItemPosition].title == newDataSet[newItemPosition].title
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldDataSet[oldItemPosition].author == newDataSet[newItemPosition].author &&
+        return oldDataSet[oldItemPosition].subredditName == newDataSet[newItemPosition].subredditName &&
                 oldDataSet[oldItemPosition].title == newDataSet[newItemPosition].title &&
                 oldDataSet[oldItemPosition].created == newDataSet[newItemPosition].created
     }
@@ -40,48 +42,67 @@ class RedditPostViewHolder(
     var image = binding.ivPostImage
 }
 
+class RedditProgressBarViewHolder(
+    binding: ListItemProgressBarBinding
+) : ViewHolder(binding.root)
+
 class RedditTopPostsAdapter(
-    private var dataSet: List<RedditDataEntity> = emptyList()
-) : RecyclerView.Adapter<RedditPostViewHolder>() {
+    private val onListEndReached: () -> Unit = {},
+) : RecyclerView.Adapter<ViewHolder>() {
+
+    private var dataSet: List<RedditDataEntity>? = null
 
     fun updateData(newData: List<RedditDataEntity>) {
-        val diffCallback = RedditPostsDiffCallback(dataSet, newData)
+        val diffCallback = RedditPostsDiffCallback(dataSet.orEmpty(), newData)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
         dataSet = newData
         diffResult.dispatchUpdatesTo(this)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RedditPostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ListItemRedditPostCardBinding.inflate(inflater, parent, false)
-
-        return RedditPostViewHolder(binding)
+        if (viewType == ITEM_PROGRESS_BAR) {
+            val binding = ListItemProgressBarBinding.inflate(inflater, parent, false)
+            return RedditProgressBarViewHolder(binding)
+        } else {
+            val binding = ListItemRedditPostCardBinding.inflate(inflater, parent, false)
+            return RedditPostViewHolder(binding)
+        }
     }
 
-    override fun getItemCount(): Int = dataSet.size
+    override fun getItemCount(): Int = dataSet?.size?.plus(1) ?: 0
 
-    override fun onBindViewHolder(holder: RedditPostViewHolder, position: Int) {
-        val timeMetadata = getTimeMetadata(dataSet[position].created)
-        val commentsCountMetadata = getCommentsCountMetadata(dataSet[position].commentsCount)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (getItemViewType(position) == ITEM_PROGRESS_BAR) {
+            onListEndReached()
+        } else {
+            val redditPostViewHolder = holder as RedditPostViewHolder
+            val postData = dataSet?.get(position) ?: throw Exception("The posts list wasn't initialized")
+            val timeMetadata = getTimeMetadata(postData.created)
+            val commentsCountMetadata = getCommentsCountMetadata(postData.commentsCount)
 
-        with(holder) {
-            username.text = dataSet[position].author
-            title.text = dataSet[position].title
-            time.text = timeMetadata
-            commentsCount.text = commentsCountMetadata
-            //TODO
-            try {
-                image.load(dataSet[position].imageUrl)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            with(redditPostViewHolder) {
+                username.text = postData.subredditName
+                title.text = postData.title
+                time.text = timeMetadata
+                commentsCount.text = commentsCountMetadata
+
+                if (postData.isVideo) {
+                    image.load(R.drawable.video_placeholder)
+                } else {
+                    image.load(postData.imageUrl)
+                }
             }
         }
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        return
-//    }
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            dataSet?.size -> ITEM_PROGRESS_BAR
+            else -> ITEM_POST
+        }
+    }
 
     private fun getTimeMetadata(timeCreated: Long): String {
         val differenceInTime = (System.currentTimeMillis() / 1000) - timeCreated

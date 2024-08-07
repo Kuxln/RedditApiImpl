@@ -22,12 +22,14 @@ data class PostItem(
 data class RedditDataEntity (
     @SerializedName("title")
     val title: String,
-    @SerializedName("author")
-    val author: String,
+    @SerializedName("subreddit_name_prefixed")
+    val subredditName: String,
     @SerializedName("url_overridden_by_dest")
     val imageUrl: String,
     @SerializedName("created")
     val created: Long,
     @SerializedName("num_comments")
     val commentsCount: Int,
+    @SerializedName("is_video")
+    val isVideo: Boolean,
 )

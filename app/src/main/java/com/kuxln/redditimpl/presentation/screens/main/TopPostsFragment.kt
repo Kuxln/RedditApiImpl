@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment_top_posts) {
     private val viewModel: TopPostsViewModel by viewModels()
-    private val adapter = RedditTopPostsAdapter()
+    private val adapter = RedditTopPostsAdapter(
+        onListEndReached = { viewModel.onListEndReached() }
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentTopPostsBinding.bind(view)
