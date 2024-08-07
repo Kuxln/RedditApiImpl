@@ -1,6 +1,7 @@
 package com.kuxln.redditimpl.presentation.screens.main
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,20 +18,19 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment_top_posts) {
     private val viewModel: TopPostsViewModel by viewModels()
+    private val adapter = RedditTopPostsAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentTopPostsBinding.bind(view)
 
-        binding.recycler.visibility = View.GONE
+        binding.recycler.layoutManager = LinearLayoutManager(requireActivity())
+        binding.recycler.addItemDecoration(PaddingDecoration(18))
+        binding.recycler.adapter = adapter
 
         viewModel.liveData.observe(this.viewLifecycleOwner) { state ->
-            state.data?.let { //TODO
-                binding.recycler.adapter = RedditTopPostsAdapter(it)
-                binding.recycler.layoutManager = LinearLayoutManager(requireActivity())
-                binding.recycler.addItemDecoration(PaddingDecoration(18))
-
+            state.data?.let {
+                adapter.updateData(it)
                 binding.progressBar.visibility = View.GONE
-                binding.recycler.visibility = View.VISIBLE
             }
 
             if (state.isError == true) {
@@ -39,5 +39,4 @@ class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment
             }
         }
     }
-
 }

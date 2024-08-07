@@ -12,10 +12,13 @@ class MainActivity : AppCompatActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val fragment = TopPostsFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_fragment_container, fragment)
-            .show(fragment)
-            .commit()
+        val tag = TopPostsFragment::class.java.name
+        if (supportFragmentManager.findFragmentByTag(tag) == null){
+            val fragment = TopPostsFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, fragment, tag)
+                .show(fragment)
+                .commit()
+        }
     }
 }

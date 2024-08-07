@@ -8,6 +8,8 @@ data class RedditApiResponse(
 )
 
 data class RedditData(
+    @SerializedName("after")
+    val after: String,
     @SerializedName("children")
     val children: List<PostItem>
 )
