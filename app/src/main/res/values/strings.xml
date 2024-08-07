@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Reddit</string>
+    <string name="save_to_gallery">Save to Gallery</string>
 </resources>

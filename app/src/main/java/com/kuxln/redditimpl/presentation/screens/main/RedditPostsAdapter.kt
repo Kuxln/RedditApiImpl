@@ -48,6 +48,7 @@ class RedditProgressBarViewHolder(
 
 class RedditTopPostsAdapter(
     private val onListEndReached: () -> Unit = {},
+    private val onImageClicked: (String) -> Unit = {},
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     private var dataSet: List<RedditDataEntity>? = null
@@ -92,6 +93,7 @@ class RedditTopPostsAdapter(
                     image.load(R.drawable.video_placeholder)
                 } else {
                     image.load(postData.imageUrl)
+                    image.setOnClickListener { onImageClicked(postData.imageUrl) }
                 }
             }
         }

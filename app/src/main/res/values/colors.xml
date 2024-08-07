@@ -3,4 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="card_background">#FEFEFE</color>
+    <color name="button_color">#46C1F3</color>
+    <color name="button_stroke">#6AD1FB</color>
+    <color name="button_color_pressed">#42AAD3</color>
+    <color name="button_stroke_pressed">#59ADCF</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="button_text_color_pressed">#A1A1A1</color>
 </resources>
