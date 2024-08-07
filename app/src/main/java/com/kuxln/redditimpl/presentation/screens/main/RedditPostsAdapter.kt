@@ -10,7 +10,8 @@ import coil.load
 import com.kuxln.redditimpl.R
 import com.kuxln.redditimpl.data.RedditDataEntity
 import com.kuxln.redditimpl.databinding.ListItemProgressBarBinding
-import com.kuxln.redditimpl.databinding.ListItemRedditPostCardBinding
+import com.kuxln.redditimpl.databinding.ListItemRedditImagePostBinding
+import com.kuxln.redditimpl.databinding.ListItemRedditLinkPostBinding
 
 class RedditPostsDiffCallback(
     private val oldDataSet: List<RedditDataEntity>,
@@ -32,12 +33,23 @@ class RedditPostsDiffCallback(
     }
 }
 
-class RedditPostViewHolder(
-    binding: ListItemRedditPostCardBinding
+class RedditImagePostViewHolder(
+    binding: ListItemRedditImagePostBinding
 ) : ViewHolder(binding.root) {
     var username = binding.tvUserName
     var title = binding.tvPostTitle
     var time = binding.tvTime
+    var commentsCount = binding.tvCommentsSection
+    var image = binding.ivPostImage
+}
+
+class RedditLinkPostViewHolder(
+    binding: ListItemRedditLinkPostBinding
+) : ViewHolder(binding.root) {
+    var username = binding.tvUserName
+    var title = binding.tvPostTitle
+    var time = binding.tvTime
+    var link = binding.tvPostLink
     var commentsCount = binding.tvCommentsSection
     var image = binding.ivPostImage
 }
@@ -49,6 +61,7 @@ class RedditProgressBarViewHolder(
 class RedditTopPostsAdapter(
     private val onListEndReached: () -> Unit = {},
     private val onImageClicked: (String) -> Unit = {},
+    private val onLinkClicked: (String) -> Unit = {},
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     private var dataSet: List<RedditDataEntity>? = null
@@ -63,46 +76,87 @@ class RedditTopPostsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        if (viewType == ITEM_PROGRESS_BAR) {
-            val binding = ListItemProgressBarBinding.inflate(inflater, parent, false)
-            return RedditProgressBarViewHolder(binding)
-        } else {
-            val binding = ListItemRedditPostCardBinding.inflate(inflater, parent, false)
-            return RedditPostViewHolder(binding)
+        return when (viewType) {
+            ITEM_IMAGE_POST -> {
+                val binding = ListItemRedditImagePostBinding.inflate(inflater, parent, false)
+                RedditImagePostViewHolder(binding)
+            }
+
+            ITEM_LINK_POST -> {
+                val binding = ListItemRedditLinkPostBinding.inflate(inflater, parent, false)
+                RedditLinkPostViewHolder(binding)
+            }
+
+            ITEM_PROGRESS_BAR -> {
+                val binding = ListItemProgressBarBinding.inflate(inflater, parent, false)
+                RedditProgressBarViewHolder(binding)
+            }
+
+            else -> throw Exception("Incorrect data type")
         }
     }
 
     override fun getItemCount(): Int = dataSet?.size?.plus(1) ?: 0
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (getItemViewType(position) == ITEM_PROGRESS_BAR) {
-            onListEndReached()
-        } else {
-            val redditPostViewHolder = holder as RedditPostViewHolder
-            val postData = dataSet?.get(position) ?: throw Exception("The posts list wasn't initialized")
-            val timeMetadata = getTimeMetadata(postData.created)
-            val commentsCountMetadata = getCommentsCountMetadata(postData.commentsCount)
+        when (getItemViewType(position)) {
+            ITEM_PROGRESS_BAR -> onListEndReached()
+            ITEM_IMAGE_POST -> {
+                val redditImagePostViewHolder = holder as RedditImagePostViewHolder
+                val postData =
+                    dataSet?.get(position) ?: throw Exception("The posts list wasn't initialized")
+                val timeMetadata = getTimeMetadata(postData.created)
+                val commentsCountMetadata = getCommentsCountMetadata(postData.commentsCount)
 
-            with(redditPostViewHolder) {
-                username.text = postData.subredditName
-                title.text = postData.title
-                time.text = timeMetadata
-                commentsCount.text = commentsCountMetadata
+                with(redditImagePostViewHolder) {
+                    username.text = postData.subredditName
+                    title.text = postData.title
+                    time.text = timeMetadata
+                    commentsCount.text = commentsCountMetadata
 
-                if (postData.isVideo) {
-                    image.load(R.drawable.video_placeholder)
-                } else {
-                    image.load(postData.imageUrl)
-                    image.setOnClickListener { onImageClicked(postData.imageUrl) }
+                    if (postData.isVideo) {
+                        image.load(R.drawable.video_placeholder)
+                    } else {
+                        image.load(postData.imageUrl)
+                        image.setOnClickListener { onImageClicked(postData.imageUrl) }
+                    }
+                }
+            }
+
+            ITEM_LINK_POST -> {
+                val redditLinkPostViewHolder = holder as RedditLinkPostViewHolder
+                val postData =
+                    dataSet?.get(position) ?: throw Exception("The posts list wasn't initialized")
+                val timeMetadata = getTimeMetadata(postData.created)
+                val commentsCountMetadata = getCommentsCountMetadata(postData.commentsCount)
+
+                with(redditLinkPostViewHolder) {
+                    username.text = postData.subredditName
+                    title.text = postData.title
+                    time.text = timeMetadata
+                    commentsCount.text = commentsCountMetadata
+                    link.text = postData.imageUrl
+                    if (postData.isVideo) {
+                        image.load(R.drawable.video_placeholder)
+                    } else {
+                        image.load(postData.thumbnail)
+                        image.setOnClickListener { onLinkClicked(postData.imageUrl) }
+                        link.setOnClickListener { onLinkClicked(postData.imageUrl) }
+                    }
                 }
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            dataSet?.size -> ITEM_PROGRESS_BAR
-            else -> ITEM_POST
+        return if (position == dataSet?.size) {
+            ITEM_PROGRESS_BAR
+        } else if (dataSet?.get(position)?.imageUrl?.contains(".jpeg") == true
+            || dataSet?.get(position)?.isVideo == true
+        ) {
+            ITEM_IMAGE_POST
+        } else {
+            ITEM_LINK_POST
         }
     }
 
@@ -118,7 +172,9 @@ class RedditTopPostsAdapter(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun getCommentsCountMetadata(commentsCount: Int): String {
+
+    private fun getCommentsCountMetadata(commentsCount: Int)
+            : String {
         return if (commentsCount < 1000) {
             commentsCount.toString()
         } else if (commentsCount / 1000 < 10) {
@@ -129,7 +185,8 @@ class RedditTopPostsAdapter(
     }
 
     companion object {
-        private const val ITEM_PROGRESS_BAR = 1
-        private const val ITEM_POST = 0
+        private const val ITEM_IMAGE_POST = 0
+        private const val ITEM_LINK_POST = 1
+        private const val ITEM_PROGRESS_BAR = 2
     }
 }

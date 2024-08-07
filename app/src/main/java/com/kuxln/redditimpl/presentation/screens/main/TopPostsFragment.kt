@@ -1,14 +1,12 @@
 package com.kuxln.redditimpl.presentation.screens.main
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.google.gson.Gson
 import com.kuxln.redditimpl.R
 import com.kuxln.redditimpl.databinding.FragmentTopPostsBinding
 import com.kuxln.redditimpl.presentation.core.ui.BaseFragment
@@ -22,6 +20,12 @@ class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment
     private val adapter = RedditTopPostsAdapter(
         onListEndReached = { viewModel.onListEndReached() },
         onImageClicked = { (requireActivity() as RedditNavigation).openUrl(it) },
+        onLinkClicked = {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setData(Uri.parse(it))
+            }
+            startActivity(intent)
+        }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

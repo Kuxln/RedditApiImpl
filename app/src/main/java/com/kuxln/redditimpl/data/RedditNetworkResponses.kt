@@ -26,10 +26,13 @@ data class RedditDataEntity (
     val subredditName: String,
     @SerializedName("url_overridden_by_dest")
     val imageUrl: String,
+    @SerializedName("thumbnail")
+    val thumbnail: String,
     @SerializedName("created")
     val created: Long,
     @SerializedName("num_comments")
     val commentsCount: Int,
     @SerializedName("is_video")
     val isVideo: Boolean,
+
 )
