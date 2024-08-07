@@ -1,24 +1,22 @@
 package com.kuxln.redditimpl.presentation.screens.previewimage
 
+import android.content.Context
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
-import java.net.URL
+import com.kuxln.redditimpl.data.GalleryStorageManager
 
-class ImagePreviewViewModel: ViewModel() {
+class ImagePreviewViewModel : ViewModel() {
 
     val liveData: LiveData<String> get() = _liveData
     private val _liveData = MutableLiveData<String>()
 
     private lateinit var state: String
 
-    fun onSaveImage() {
-        saveImage()
+    fun onSaveImage(context: Context, imageDrawable: Drawable) {
+        saveImage(context, imageDrawable as BitmapDrawable)
     }
 
     fun onFragmentCreated(imageUrl: String) {
@@ -26,7 +24,7 @@ class ImagePreviewViewModel: ViewModel() {
         _liveData.postValue(state)
     }
 
-    private fun saveImage() {
-
+    private fun saveImage(context: Context, imageDrawable: BitmapDrawable) {
+        GalleryStorageManager.saveImage(context, imageDrawable)
     }
 }

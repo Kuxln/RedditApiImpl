@@ -1,5 +1,8 @@
 package com.kuxln.redditimpl.presentation.screens.previewimage
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -25,18 +28,37 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
         }
 
         binding.saveButton.setOnClickListener {
-            viewModel.onSaveImage()
+            checkPermission(
+                onSuccess = { viewModel.onSaveImage(requireActivity(), binding.imagePreview.drawable) }
+            )
         }
+
 
         val imageUrl = arguments?.getString(IMAGE_URL, "")
         if (imageUrl?.isNotEmpty() == true) {
             viewModel.onFragmentCreated(imageUrl)
         }
 
-        viewModel.liveData.observe(this.viewLifecycleOwner) {stateImageUrl ->
+        viewModel.liveData.observe(this.viewLifecycleOwner)
+        { stateImageUrl ->
             if (stateImageUrl != null) {
                 binding.imagePreview.load(stateImageUrl)
             }
+        }
+    }
+
+    private fun checkPermission(onSuccess: () -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            viewModel.onSaveImage(requireActivity(), binding.imagePreview.drawable)
+        } else if (requireActivity().checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            onSuccess()
+        } else {
+            requireActivity().requestPermissions(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
+            )
         }
     }
 
