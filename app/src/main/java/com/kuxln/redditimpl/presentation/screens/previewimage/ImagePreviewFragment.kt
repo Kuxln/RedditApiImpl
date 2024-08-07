@@ -2,20 +2,36 @@ package com.kuxln.redditimpl.presentation.screens.previewimage
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import coil.load
 import com.kuxln.redditimpl.R
 import com.kuxln.redditimpl.databinding.FragmentImagePreviewBinding
 import com.kuxln.redditimpl.presentation.core.ui.BaseFragment
+import com.kuxln.redditimpl.presentation.core.ui.RedditNavigation
 
 class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
     R.layout.fragment_image_preview
 ) {
+
+    private val viewModel: ImagePreviewViewModel by viewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentImagePreviewBinding.bind(view)
 
-        //TODO("Change logic)
+        binding.toolbar.setNavigationOnClickListener {
+            (requireActivity() as RedditNavigation).onToolbarBack()
+        }
+
         val imageUrl = arguments?.getString(IMAGE_URL, "")
-        binding.imagePreview.load(imageUrl)
+        if (imageUrl?.isNotEmpty() == true) {
+            viewModel.onFragmentCreated(imageUrl)
+        }
+
+        viewModel.liveData.observe(this.viewLifecycleOwner) {stateImageUrl ->
+            if (stateImageUrl != null) {
+                binding.imagePreview.load(stateImageUrl)
+            }
+        }
     }
 
     companion object {

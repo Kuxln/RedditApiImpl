@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(
         super.onCreate(savedInstanceState)
 
         val tag = TopPostsFragment::class.java.name
-        if (supportFragmentManager.findFragmentByTag(tag) == null){
+        if (supportFragmentManager.findFragmentByTag(tag) == null) {
             val fragment = TopPostsFragment()
             supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, fragment, tag)
@@ -25,10 +25,16 @@ class MainActivity : AppCompatActivity(
     }
 
     override fun openUrl(imageUrl: String) {
-            val fragment = ImagePreviewFragment.newInstance(imageUrl)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, fragment)
-                .show(fragment)
-                .commit()
+        val tag = ImagePreviewFragment::class.java.name
+        val fragment = ImagePreviewFragment.newInstance(imageUrl)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragment_container, fragment)
+            .addToBackStack(tag)
+            .show(fragment)
+            .commit()
+    }
+
+    override fun onToolbarBack() {
+        onBackPressed()
     }
 }

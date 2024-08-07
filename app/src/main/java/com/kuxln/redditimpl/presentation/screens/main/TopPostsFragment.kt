@@ -21,7 +21,6 @@ class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment
     private val viewModel: TopPostsViewModel by viewModels()
     private val adapter = RedditTopPostsAdapter(
         onListEndReached = { viewModel.onListEndReached() },
-        //TODO
         onImageClicked = { (requireActivity() as RedditNavigation).openUrl(it) },
     )
 
