@@ -29,7 +29,7 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
 
         binding.saveButton.setOnClickListener {
             checkPermission(
-                onSuccess = { viewModel.onSaveImage(requireActivity(), binding.imagePreview.drawable) }
+                onSuccess = { viewModel.onSaveImage(binding.imagePreview.drawable) }
             )
         }
 
@@ -49,7 +49,7 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
 
     private fun checkPermission(onSuccess: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            viewModel.onSaveImage(requireActivity(), binding.imagePreview.drawable)
+            viewModel.onSaveImage(binding.imagePreview.drawable)
         } else if (requireActivity().checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
