@@ -11,6 +11,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/icon_arrow_back">
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/PostTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/image_preview"/>

@@ -8,7 +8,9 @@ import com.kuxln.redditimpl.R
 import com.kuxln.redditimpl.databinding.FragmentImagePreviewBinding
 import com.kuxln.redditimpl.presentation.core.ui.BaseFragment
 import com.kuxln.redditimpl.presentation.core.ui.RedditNavigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
     R.layout.fragment_image_preview
 ) {
@@ -20,6 +22,10 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
 
         binding.toolbar.setNavigationOnClickListener {
             (requireActivity() as RedditNavigation).onToolbarBack()
+        }
+
+        binding.saveButton.setOnClickListener {
+            viewModel.onSaveImage()
         }
 
         val imageUrl = arguments?.getString(IMAGE_URL, "")
