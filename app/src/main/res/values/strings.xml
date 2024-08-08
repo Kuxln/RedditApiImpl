@@ -2,4 +2,6 @@
     <string name="app_name">Reddit</string>
     <string name="save_to_gallery">Save to Gallery</string>
     <string name="image_preview">Image preview</string>
+    <string name="image_saved">Image saved successfully</string>
+    <string name="image_not_saved">Image not saved</string>
 </resources>

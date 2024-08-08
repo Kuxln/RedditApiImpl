@@ -43,12 +43,12 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
             }
 
             if (state.isImageSaved == true) {
-                Toast.makeText(requireActivity(), "Image saved Successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), R.string.image_saved, Toast.LENGTH_SHORT).show()
                 viewModel.onSaveResultShowed()
             }
 
             if (state.isImageSaved == false) {
-                Toast.makeText(requireActivity(), "Image not saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireActivity(), R.string.image_not_saved, Toast.LENGTH_SHORT).show()
                 viewModel.onSaveResultShowed()
             }
         }
