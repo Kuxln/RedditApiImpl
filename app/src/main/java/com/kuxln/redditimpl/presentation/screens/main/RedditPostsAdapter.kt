@@ -22,8 +22,7 @@ class RedditPostsDiffCallback(
     override fun getNewListSize(): Int = newDataSet.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldDataSet[oldItemPosition].subredditName == newDataSet[newItemPosition].subredditName &&
-                oldDataSet[oldItemPosition].title == newDataSet[newItemPosition].title
+        return oldDataSet[oldItemPosition] == newDataSet[newItemPosition]
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -116,6 +115,7 @@ class RedditTopPostsAdapter(
 
                     if (postData.isVideo) {
                         image.load(R.drawable.video_placeholder)
+                        image.setOnClickListener {  }
                     } else {
                         image.load(postData.imageUrl)
                         image.setOnClickListener { onImageClicked(postData.imageUrl) }
@@ -136,13 +136,9 @@ class RedditTopPostsAdapter(
                     time.text = timeMetadata
                     commentsCount.text = commentsCountMetadata
                     link.text = postData.imageUrl
-                    if (postData.isVideo) {
-                        image.load(R.drawable.video_placeholder)
-                    } else {
-                        image.load(postData.thumbnail)
-                        image.setOnClickListener { onLinkClicked(postData.imageUrl) }
-                        link.setOnClickListener { onLinkClicked(postData.imageUrl) }
-                    }
+                    image.load(postData.thumbnail)
+                    image.setOnClickListener { onLinkClicked(postData.imageUrl) }
+                    link.setOnClickListener { onLinkClicked(postData.imageUrl) }
                 }
             }
         }

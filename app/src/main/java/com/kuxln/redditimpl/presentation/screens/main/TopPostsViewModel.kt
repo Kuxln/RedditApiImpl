@@ -25,6 +25,10 @@ class TopPostsViewModel @Inject constructor(
         fetchData()
     }
 
+    fun onRefresh() {
+        refreshData()
+    }
+
     fun onError() {
         state.isError = null
         _liveData.postValue(state)
@@ -41,6 +45,7 @@ class TopPostsViewModel @Inject constructor(
                     item.data
                 }
                 currentSlice = it.after
+                if (state.isRefreshing == true) state.isRefreshing = false
             }.onFailure {
                 it.printStackTrace()
                 state.isError = true
@@ -63,5 +68,11 @@ class TopPostsViewModel @Inject constructor(
             }
             _liveData.postValue(state)
         }
+    }
+
+    private fun refreshData() {
+        state.isRefreshing = true
+        _liveData.postValue(state)
+        fetchData()
     }
 }

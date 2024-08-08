@@ -19,7 +19,7 @@ class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment
     private val viewModel: TopPostsViewModel by viewModels()
     private val adapter = RedditTopPostsAdapter(
         onListEndReached = { viewModel.onListEndReached() },
-        onImageClicked = { (requireActivity() as RedditNavigation).openUrl(it) },
+        onImageClicked = { (requireActivity() as RedditNavigation).openImagePreview(it) },
         onLinkClicked = {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 setData(Uri.parse(it))
@@ -35,10 +35,20 @@ class TopPostsFragment : BaseFragment<FragmentTopPostsBinding>(R.layout.fragment
         binding.recycler.addItemDecoration(PaddingDecoration(18))
         binding.recycler.adapter = adapter
 
+        binding.swipeToRefresh.setOnRefreshListener {
+            viewModel.onRefresh()
+        }
+
         viewModel.liveData.observe(this.viewLifecycleOwner) { state ->
             state.data?.let {
                 adapter.updateData(it)
-                binding.progressBar.visibility = View.GONE
+                if (binding.progressBar.visibility == View.VISIBLE) {
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
+
+            if (state.isRefreshing == false) {
+                binding.swipeToRefresh.isRefreshing = false
             }
 
             if (state.isError == true) {

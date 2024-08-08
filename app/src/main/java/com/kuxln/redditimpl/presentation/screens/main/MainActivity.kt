@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(
         }
     }
 
-    override fun openUrl(imageUrl: String) {
+    override fun openImagePreview(imageUrl: String) {
         val tag = ImagePreviewFragment::class.java.name
         val fragment = ImagePreviewFragment.newInstance(imageUrl)
         supportFragmentManager.beginTransaction()

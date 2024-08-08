@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import coil.load
 import com.kuxln.redditimpl.R
@@ -33,16 +34,22 @@ class ImagePreviewFragment : BaseFragment<FragmentImagePreviewBinding>(
             )
         }
 
+        val imageUrl = arguments?.getString(IMAGE_URL)
+        imageUrl?.let { viewModel.onFragmentCreated(imageUrl) }
 
-        val imageUrl = arguments?.getString(IMAGE_URL, "")
-        if (imageUrl?.isNotEmpty() == true) {
-            viewModel.onFragmentCreated(imageUrl)
-        }
+        viewModel.liveData.observe(this.viewLifecycleOwner) {state ->
+            if (state.imageUrl != null) {
+                binding.imagePreview.load(state.imageUrl)
+            }
 
-        viewModel.liveData.observe(this.viewLifecycleOwner)
-        { stateImageUrl ->
-            if (stateImageUrl != null) {
-                binding.imagePreview.load(stateImageUrl)
+            if (state.isImageSaved == true) {
+                Toast.makeText(requireActivity(), "Image saved Successfully", Toast.LENGTH_SHORT).show()
+                viewModel.onSaveResultShowed()
+            }
+
+            if (state.isImageSaved == false) {
+                Toast.makeText(requireActivity(), "Image not saved", Toast.LENGTH_SHORT).show()
+                viewModel.onSaveResultShowed()
             }
         }
     }
